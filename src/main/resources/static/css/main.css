@@ -1,0 +1,56 @@
+body {
+    margin: 40px;
+}
+
+.pager {
+    display: flex;
+    justify-content: center;
+}
+
+.controls {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.submit {
+    align-self: flex-end;
+}
+
+.page {
+    width: 2em;
+    height: 2em;
+    text-align: center;
+    border-radius: 50%;
+}
+
+a.page:hover {
+    background-color: #F1F1F1;
+}
+
+a.page {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+span.page.active {
+    cursor: not-allowed;
+    color: silver;
+}
+
+.totalCount {
+    text-align: right;
+}
+
+form {
+    background-color: rgb(246, 250, 255);
+    padding: 20px;
+    border: 1px solid silver;
+    border-radius: 10px;
+}
+
+section {
+    background-color: rgb(236, 249, 255);
+    padding: 1rem;
+    margin-bottom: 3rem;
+    border-radius: 1rem;
+}
