@@ -1,9 +1,11 @@
 package cz.czechitas.java2webapps.lekce9.controller;
 
+import cz.czechitas.java2webapps.lekce9.entity.Osoba;
 import cz.czechitas.java2webapps.lekce9.form.RokNarozeniForm;
 import cz.czechitas.java2webapps.lekce9.service.OsobaService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
@@ -31,8 +33,17 @@ public class OsobaController {
 
     @GetMapping("/")
     public ModelAndView zakladniSeznam(@PageableDefault(sort = {"prijmeni", "jmeno"}) Pageable pageable) {
+
+        Page<Osoba> page = service.seznamOsob(pageable);
+
         return new ModelAndView("osoby")
                 .addObject("osoby", service.seznamOsob(pageable));
+    }
+
+    @GetMapping("/test")
+    public ModelAndView dlePrijmeni(String prijmeni, @PageableDefault(sort = {"prijmeni", "jmeno"}) Pageable pageable) {
+        return new ModelAndView("osoby")
+                .addObject("osoby", service.seznamOsobPodlePrijmeni(prijmeni, pageable));
     }
 
     @GetMapping("/dle-data-narozeni")
@@ -49,33 +60,42 @@ public class OsobaController {
     }
 
     @GetMapping("/prijmeni")
-    public ModelAndView prijmeni(@ModelAttribute("prijmeni") @Valid @NotBlank String prijmeni, @PageableDefault() Pageable pageable) {
+    public ModelAndView prijmeni(@ModelAttribute("prijmeni") @Valid @NotBlank String prijmeni, @PageableDefault(sort = {"prijmeni", "jmeno"}) Pageable pageable) {
         return new ModelAndView("osoby")
                 .addObject("formInclude", "prijmeni.ftlh")
-                //TODO vytvořit a použít správnou metodu pro načtení dat
-                .addObject("osoby", service.seznamOsob(pageable));
+                //vytvořit a použít správnou metodu pro načtení dat
+                .addObject("osoby", service.seznamOsobPodlePrijmeni(prijmeni, pageable));
     }
 
     @GetMapping("/obec")
     public ModelAndView obec(@ModelAttribute("obec") @Valid @NotBlank String obec, @PageableDefault(sort = {"prijmeni", "jmeno"}) Pageable pageable) {
         return new ModelAndView("osoby-s-adresou")
                 .addObject("formInclude", "obec.ftlh")
-                //TODO vytvořit a použít správnou metodu pro načtení dat
-                .addObject("osoby", service.seznamOsob(pageable));
+                //vytvořit a použít správnou metodu pro načtení dat
+                .addObject("osoby", service.seznamOsobPodleObce(obec, pageable));
     }
 
     @GetMapping("/minimalni-vek")
     public ModelAndView minimalniVek(@ModelAttribute("vek") int vek, @PageableDefault(sort = {"prijmeni", "jmeno"}) Pageable pageable) {
         return new ModelAndView("osoby")
                 .addObject("formInclude", "minimalni-vek.ftlh")
-                //TODO vytvořit a použít správnou metodu pro načtení dat
-                .addObject("osoby", service.seznamOsob(pageable));
+                //vytvořit a použít správnou metodu pro načtení dat
+                .addObject("osoby", service.seznamOsobPodleMinimalniVek(vek, pageable));
+    }
+
+    @GetMapping("/jmeno-prijmeni")
+    public ModelAndView jmenoPrijmeni(@ModelAttribute("jmeno") @Valid @NotBlank String jmeno, @ModelAttribute("prijmeni")  @Valid @NotBlank String prijmeni, @PageableDefault(sort = {"prijmeni", "jmeno"}) Pageable pageable) {
+        return new ModelAndView("osoby")
+                .addObject("formInclude", "prijmeni.ftlh")
+                //vytvořit a použít správnou metodu pro načtení dat
+                .addObject("osoby", service.seznamOsobpodleJmenaAPrijmeni(jmeno, prijmeni, pageable));
     }
 
     @ModelAttribute("currentYear")
     public int getCurrentYear() {
         return LocalDate.now().getYear();
     }
+
 
     /**
      * Nejstarší rok narození, který může uživatel zadat.

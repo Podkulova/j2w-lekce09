@@ -41,8 +41,21 @@ public interface OsobaRepository extends JpaRepository<Osoba, Long> {
     Page<Osoba> findByPrijmeniStartingWithIgnoreCase(String prijmeni, Pageable pageable);
 
     /**
+     * Vrací všech osoby, jejichž příjmení se rovná uvedenému textu.
+     */
+    Page<Osoba> findByPrijmeni(String prijmeni, Pageable pageable);
+
+    /**
      * Vyhledá všechny osoby, které se narodily v rozmezí zadaných let.
      */
     @Query("SELECT o FROM Osoba o WHERE YEAR(o.datumNarozeni) BETWEEN :pocatecniRok AND :koncovyRok")
     Page<Osoba> findByRok(@Param("pocatecniRok") int pocatecniRok, @Param("koncovyRok") int koncovyRok, Pageable pageable);
+
+    /*
+    Vyzkoušet vytvořit vlastní metody v repository (ty podle názvu), třeba:
+-> Hledání podle jména a příjmení, bez rozlišení velikosti písmen a jen podle začátku, tj. abych mohl zadat třeba jmeno=Eva&prijmeni=Nov a našlo mi to všechny Evy Novákové i Evy Novotné.
+     */
+
+    @Query("SELECT o FROM Osoba o WHERE (o.jmeno = ?1 and o.prijmeni = ?2)")
+    Page<Osoba> findByJmenoAndPrijmeni(@Param("jmeno") String jmeno, @Param ("prijmeni") String prijmeni, Pageable pageable);
 }
